@@ -15,7 +15,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "Ayush Bhardwaj"
-          git config --global user.email "YOUR_GITHUB_EMAIL"
+          git config --global user.email "ayushavdhesh98@gmail.com "
 
       - name: Generate realistic commits
         run: |
