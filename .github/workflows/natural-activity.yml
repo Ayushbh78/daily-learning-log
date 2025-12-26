@@ -1,0 +1,62 @@
+name: Natural Developer Activity
+
+on:
+  workflow_dispatch:   # allows immediate run
+  schedule:
+    - cron: '10 1 * * *'   # daily ~06:40 IST
+
+jobs:
+  activity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Ayush Bhardwaj"
+          git config --global user.email "YOUR_GITHUB_EMAIL"
+
+      - name: Generate realistic commits
+        run: |
+          MIN=4
+          MAX=12
+          COMMITS=$((RANDOM % (MAX - MIN + 1) + MIN))
+
+          echo "Making $COMMITS commits today"
+
+          for i in $(seq 1 $COMMITS)
+          do
+            TYPE=$((RANDOM % 4))
+            TIME=$(date +"%Y-%m-%d %H:%M:%S")
+
+            if [ $TYPE -eq 0 ]; then
+              FILE="leetcode/$(date +%Y-%m-%d).md"
+              echo "- Practiced DSA problem at $TIME" >> $FILE
+              MSG="leetcode: daily practice"
+
+            elif [ $TYPE -eq 1 ]; then
+              FILE="notes/$(date +%Y-%m).md"
+              echo "- Study notes updated at $TIME" >> $FILE
+              MSG="notes: learning update"
+
+            elif [ $TYPE -eq 2 ]; then
+              FILE="scripts/util_$(date +%s).py"
+              echo "print('Utility created at $TIME')" > $FILE
+              MSG="scripts: add utility script"
+
+            else
+              FILE="tracker/daily-progress.md"
+              echo "- Progress logged at $TIME" >> $FILE
+              MSG="tracker: daily progress"
+            fi
+
+            git add .
+            git commit -m "$MSG"
+
+            SLEEP=$((RANDOM % 120 + 30))
+            sleep $SLEEP
+          done
+
+      - name: Push commits
+        run: git push
